@@ -297,24 +297,13 @@ function highlight(txt,term){if(!term||!txt)return txt||'';const e=term.replace(
 function parseCSV(text){
   const lines=text.trim().split('\n');
   if(lines.length<2)return[];
-  const headers=parseCSVLine(lines[0]);
+  const headers=lines[0].split('|').map(h=>h.trim());
   return lines.slice(1).filter(l=>l.trim()).map(line=>{
-    const cols=parseCSVLine(line);
+    const cols=line.split('|');
     const obj={};
     headers.forEach((h,i)=>obj[h]=(cols[i]||'').trim());
     return obj;
   });
-}
-function parseCSVLine(line){
-  const cols=[];let cur='';let inQ=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
-    else if(c===','&&!inQ){cols.push(cur);cur='';}
-    else cur+=c;
-  }
-  cols.push(cur);
-  return cols.map(c=>c.replace(/^"|"$/g,''));
 }
 
 // ── FETCH FROM GITHUB RAW ──
